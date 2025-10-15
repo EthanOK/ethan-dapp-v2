@@ -1,11 +1,17 @@
 import { createAppKit } from '@reown/appkit/react'
-import { networks, projectId, metadata, ethersAdapter, solanaAdapter } from './config'
-import { ActionButtonList } from './components/ActionButtonList'
-import { SmartContractActionButtonList } from './components/SmartContractActionButtonList'
-import { InfoList } from './components/InfoList'
-import { useState } from 'react'
+import {
+  networks,
+  projectId,
+  metadata,
+  ethersAdapter,
+  solanaAdapter,
+} from './config'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { EthersPage } from './pages/EthersPage'
+import { SolanaPage } from './pages/SolanaPage'
+import { AutoRedirect } from './components/AutoRedirect'
 
-import "./App.css"
+import './App.css'
 
 // Create a AppKit instance
 createAppKit({
@@ -15,24 +21,23 @@ createAppKit({
   projectId,
   themeMode: 'light',
   features: {
-    analytics: true // Optional - defaults to your Cloud configuration
+    analytics: true, // Optional - defaults to your Cloud configuration
   },
   themeVariables: {
     '--w3m-accent': '#000000',
-  }
+  },
 })
 
 export function App() {
-
-
-
   return (
-    <div className={"pages"}>
-      <img src="/reown.svg" alt="Reown" style={{ width: '150px', height: '150px' }} />
-      <h1>Ethan Dapp V2</h1>
-      <appkit-button />
-      <InfoList hash={``} signedMsg={``} balance={``}/>
-    </div>
+    <BrowserRouter>
+      <AutoRedirect />
+      <Routes>
+        <Route path="/" element={<Navigate to="/ethers" replace />} />
+        <Route path="/ethers" element={<EthersPage />} />
+        <Route path="/solana" element={<SolanaPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
