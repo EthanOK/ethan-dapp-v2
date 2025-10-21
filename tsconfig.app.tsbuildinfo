@@ -1,1 +1,1 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/hooks.tsx"],"version":"5.6.2"}
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/actionbuttonlistethers.tsx","./src/components/actionbuttonlistsolana.tsx","./src/components/autoredirect.tsx","./src/components/infolist.tsx","./src/components/smartcontractactionbuttonlist.tsx","./src/config/constant.ts","./src/config/index.tsx","./src/hooks/usechaindetection.ts","./src/pages/etherspage.tsx","./src/pages/solanapage.tsx"],"version":"5.9.3"}
