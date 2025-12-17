@@ -6,10 +6,14 @@ import {
   ethersAdapter,
   solanaAdapter,
 } from './config'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { EthersPage } from './pages/EthersPage'
 import { SolanaPage } from './pages/SolanaPage'
 import { AutoRedirect } from './components/AutoRedirect'
+import { TronPage } from './pages/TronPage'
+import { Navigation } from './components/Navigation'
+import { HomeRedirect } from './components/HomeRedirect'
+import { ROUTES } from './config/constant'
 
 import './App.css'
 
@@ -31,11 +35,13 @@ createAppKit({
 export function App() {
   return (
     <BrowserRouter>
+      <Navigation />
       <AutoRedirect />
       <Routes>
-        <Route path="/" element={<Navigate to="/ethers" replace />} />
-        <Route path="/ethers" element={<EthersPage />} />
-        <Route path="/solana" element={<SolanaPage />} />
+        <Route path={ROUTES.HOME} element={<HomeRedirect />} />
+        <Route path={ROUTES.ETHERS} element={<EthersPage />} />
+        <Route path={ROUTES.SOLANA} element={<SolanaPage />} />
+        <Route path={ROUTES.TRON} element={<TronPage />} />
       </Routes>
     </BrowserRouter>
   )

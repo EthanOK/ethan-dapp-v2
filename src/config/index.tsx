@@ -19,8 +19,8 @@ if (!projectId) {
 
 // Create a metadata object - optional
 export const metadata = {
-  name: 'AppKit',
-  description: 'AppKit Example',
+  name: 'Ethan Dapp V2',
+  description: 'Ethan Dapp V2',
   url: 'https://reown.com', // origin must match your domain & subdomain
   icons: ['https://avatars.githubusercontent.com/u/179229932'],
 }
