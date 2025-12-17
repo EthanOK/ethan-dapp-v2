@@ -29,3 +29,5 @@ export const NAV_ITEMS = [
 
 export const TRON_MAIN_NET_RPC_URL = 'https://api.trongrid.io'
 export const TRON_NILE_NET_RPC_URL = 'https://nile.trongrid.io'
+
+export const USDT_TRON_NILE_ADDRESS = 'TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf'

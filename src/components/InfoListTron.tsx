@@ -28,7 +28,7 @@ export const InfoList = ({ hash, signedMsg, balance }: InfoListProps) => {
             await tronWeb.trx.getUnconfirmedTransactionInfo(hash)
           const result = unconfirmedTransactionInfo
 
-          const isSuccess = result?.blockNumber ? true : false
+          const isSuccess = result.result !== 'FAILED'
 
           setStatusTx(isSuccess ? 'Success' : 'Failed')
 

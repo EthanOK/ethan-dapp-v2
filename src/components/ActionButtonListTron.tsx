@@ -3,11 +3,13 @@ import {
   DEFAULT_TRANSFER_AMOUNT,
   ETHAN_TRON_ADDRESS,
   TRON_NILE_NET_RPC_URL,
+  USDT_TRON_NILE_ADDRESS,
 } from '../config/constant'
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useWalletModal } from '@tronweb3/tronwallet-adapter-react-ui'
 import { NetworkType } from '@tronweb3/tronwallet-abstract-adapter'
 import { chainIdNetworkMap } from '@tronweb3/tronwallet-adapters'
+import erc20ABI from '../abis/erc20.json'
 
 const getChainIdByNetwork = (network: NetworkType) =>
   Object.entries(chainIdNetworkMap).find(([, v]) => v === network)?.[0]
@@ -76,6 +78,32 @@ export const ActionButtonList = ({
 
     const receipt = await tronWeb.trx.sendRawTransaction(signedTransaction)
 
+    if (receipt.result) {
+      sendHash(receipt.transaction.txID)
+    } else {
+      throw Error('Failed to send transaction')
+    }
+  }
+
+  const handleSendUSDT = async () => {
+    if (!wallet || !connected || !walletAddress)
+      throw Error('user is disconnected')
+
+    const functionSelector = 'transfer(address,uint256)'
+    const parameter = [
+      { type: 'address', value: ETHAN_TRON_ADDRESS },
+      { type: 'uint256', value: TronWeb.toSun(DEFAULT_TRANSFER_AMOUNT) },
+    ]
+    const tx = await tronWeb.transactionBuilder.triggerSmartContract(
+      USDT_TRON_NILE_ADDRESS,
+      functionSelector,
+      {},
+      parameter,
+      walletAddress,
+    )
+
+    const signedTx = await signTransaction(tx.transaction)
+    const receipt = await tronWeb.trx.sendRawTransaction(signedTx)
     if (receipt.result) {
       sendHash(receipt.transaction.txID)
     } else {
@@ -158,8 +186,15 @@ export const ActionButtonList = ({
     if (!wallet || !walletAddress) throw Error('user is disconnected')
 
     const balance = await tronWeb.trx.getBalance(walletAddress)
+    // USDT_TRON_NILE_ADDRESS
+    const USDT = await getTRC20Contract(tronWeb, USDT_TRON_NILE_ADDRESS)
 
-    sendBalance(`${TronWeb.fromSun(balance)} TRX`)
+    const balance_USDT = await USDT.balanceOf(walletAddress).call({
+      from: walletAddress,
+    })
+    sendBalance(
+      `${TronWeb.fromSun(balance)} TRX, ${TronWeb.fromSun(balance_USDT)} USDT`,
+    )
   }
   return (
     <div>
@@ -170,10 +205,17 @@ export const ActionButtonList = ({
           {/* <button onClick={() => switchNetwork(networks[1])}>Switch</button> */}
           <button onClick={handleSignMsg}>Sign msg</button>
           <button onClick={handleSignTypedData}>Sign TypedData</button>
-          <button onClick={handleSendTx}>Send tx</button>
+          <button onClick={handleSendTx}>Send TRX</button>
+          <button onClick={handleSendUSDT}>Send USDT</button>
           <button onClick={handleGetBalance}>Get Balance</button>
         </div>
       ) : null}
     </div>
   )
+}
+
+const getTRC20Contract = async (tronWeb: TronWeb, tokenAddress: string) => {
+  const contract = tronWeb.contract(erc20ABI, tokenAddress)
+
+  return contract
 }
