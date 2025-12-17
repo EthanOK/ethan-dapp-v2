@@ -9,8 +9,8 @@ export const useChainDetection = () => {
     console.log('caipAddress: ', caipAddress)
     console.log('chainId: ', chainId)
 
-    // CAIP地址格式: namespace:reference@address
-    // 例如: eip155:1@0x... 或 solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp
+    // CAIP address format: namespace:reference@address
+    // Example: eip155:1@0x... or solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp
     const [namespace] = caipAddress.split(':')
 
     switch (namespace) {
