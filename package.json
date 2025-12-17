@@ -13,16 +13,16 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@reown/appkit": "1.8.10",
-    "@reown/appkit-adapter-ethers": "1.8.10",
-    "@reown/appkit-adapter-solana": "^1.8.10",
+    "@reown/appkit": "1.8.15",
+    "@reown/appkit-adapter-ethers": "1.8.15",
+    "@reown/appkit-adapter-solana": "^1.8.15",
     "@tronweb3/tronwallet-adapter-react-hooks": "1.1.10",
     "@tronweb3/tronwallet-adapter-react-ui": "^1.1.11",
     "@tronweb3/tronwallet-adapters": "1.2.16",
-    "ethers": "^6.13.2",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.4"
+    "ethers": "^6.16.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-router-dom": "^7.10.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
