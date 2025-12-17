@@ -14,6 +14,7 @@ import { TronPage } from './pages/TronPage'
 import { Navigation } from './components/Navigation'
 import { HomeRedirect } from './components/HomeRedirect'
 import { ROUTES } from './config/constant'
+import { Toaster } from 'react-hot-toast'
 
 import './App.css'
 
@@ -37,6 +38,7 @@ export function App() {
     <BrowserRouter>
       <Navigation />
       <AutoRedirect />
+      <Toaster position="top-right" />
       <Routes>
         <Route path={ROUTES.HOME} element={<HomeRedirect />} />
         <Route path={ROUTES.ETHERS} element={<EthersPage />} />

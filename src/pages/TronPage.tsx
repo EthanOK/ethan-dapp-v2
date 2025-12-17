@@ -9,11 +9,10 @@ import {
   WalletActionButton,
   WalletModalProvider,
 } from '@tronweb3/tronwallet-adapter-react-ui'
-import {
-  useWallet,
-  WalletProvider,
-} from '@tronweb3/tronwallet-adapter-react-hooks'
-import { useMemo } from 'react'
+import { WalletProvider } from '@tronweb3/tronwallet-adapter-react-hooks'
+import { useMemo, useState } from 'react'
+import { ActionButtonList } from '../components/ActionButtonListTron'
+import { InfoList } from '../components/InfoListTron'
 // import { metadata, projectId } from '../config'
 
 export const TronPage = () => {
@@ -40,8 +39,19 @@ export const TronPage = () => {
   const onError = (error: Error) => {
     console.error('Error:', error)
   }
+  const onAccountsChanged = (address: string, preAddr?: string) => {
+    console.log('onAccountsChanged: ', preAddr, '->', address)
+  }
+  const onChainChanged = (chainData: unknown) => {
+    console.log('onChainChanged: ', chainData)
+  }
   return (
-    <WalletProvider onError={onError} adapters={adapters}>
+    <WalletProvider
+      onError={onError}
+      adapters={adapters}
+      onAccountsChanged={onAccountsChanged}
+      onChainChanged={onChainChanged}
+    >
       <WalletModalProvider>
         <TronPageContent />
       </WalletModalProvider>
@@ -50,12 +60,21 @@ export const TronPage = () => {
 }
 
 const TronPageContent = () => {
-  const { wallet } = useWallet()
-  console.log('wallet: ', wallet?.adapter.name)
+  const [hash, setHash] = useState('')
+  const [signedMsg, setSignedMsg] = useState('')
+  const [balance, setBalance] = useState('')
+
   return (
     <div className={'pages'}>
       <h1>Ethan Dapp V2 - Tron</h1>
       <WalletActionButton />
+
+      <ActionButtonList
+        sendHash={setHash}
+        sendSignMsg={setSignedMsg}
+        sendBalance={setBalance}
+      />
+      <InfoList hash={hash} signedMsg={signedMsg} balance={balance} />
     </div>
   )
 }
