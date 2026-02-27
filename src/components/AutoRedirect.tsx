@@ -25,6 +25,11 @@ export const AutoRedirect = () => {
         if (currentPath !== ROUTES.TRON) {
           navigate(ROUTES.SOLANA)
         }
+      } else if (chainType === 'bitcoin' && currentPath !== ROUTES.BITCOIN) {
+        // Allow access to /tron page, no redirect
+        if (currentPath !== ROUTES.TRON) {
+          navigate(ROUTES.BITCOIN)
+        }
       }
     }
   }, [isConnected, chainType, navigate, location.pathname])

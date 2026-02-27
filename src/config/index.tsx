@@ -4,10 +4,13 @@ import {
   sepolia,
   solana,
   solanaDevnet,
+  bitcoin,
+  bitcoinTestnet,
 } from '@reown/appkit/networks'
 import type { AppKitNetwork } from '@reown/appkit/networks'
 import { EthersAdapter } from '@reown/appkit-adapter-ethers'
 import { SolanaAdapter } from '@reown/appkit-adapter-solana'
+import { BitcoinAdapter } from '@reown/appkit-adapter-bitcoin'
 
 // Get projectId from https://dashboard.reown.com
 export const projectId =
@@ -26,12 +29,19 @@ export const metadata = {
 }
 
 // for custom networks visit -> https://docs.reown.com/appkit/react/core/custom-networks
-export const networks = [sepolia, mainnet, arbitrum, solanaDevnet, solana] as [
-  AppKitNetwork,
-  ...AppKitNetwork[],
-]
+export const networks = [
+  sepolia,
+  mainnet,
+  arbitrum,
+  solanaDevnet,
+  solana,
+  bitcoin,
+  bitcoinTestnet,
+] as [AppKitNetwork, ...AppKitNetwork[]]
 
 // Set up Solana Adapter
 export const ethersAdapter = new EthersAdapter()
 
 export const solanaAdapter = new SolanaAdapter()
+
+export const bitcoinAdapter = new BitcoinAdapter()

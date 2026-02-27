@@ -3,8 +3,18 @@ export const ETHAN_ETH_ADDRESS: string =
 export const ETHAN_SOL_ADDRESS: string =
   '6HmQJ6bn3AExJwKvdWZbN96kEJcKTgTnZ4szM5atYyC8'
 export const ETHAN_TRON_ADDRESS: string = 'TJwsjYijRMZB88nmwexuiAQ3MJGct2s4wQ'
+export const ETHAN_BTC_ADDRESS: string =
+  'bc1qup358hl6xfumst8tz4q2l9hjfe7ek253h350p3'
+export const ETHAN_TBTC_ADDRESS: string =
+  'tb1qup358hl6xfumst8tz4q2l9hjfe7ek253ah0u6z'
 
-export const DEFAULT_TRANSFER_AMOUNT: number = 0.1 // 0.1 ETH or 0.1 SOL or 0.1 TRON
+export const GetRecipientBitcoinAddress = (isTestnet: boolean = false) => {
+  return isTestnet ? ETHAN_TBTC_ADDRESS : ETHAN_BTC_ADDRESS
+}
+
+export const DEFAULT_TRANSFER_AMOUNT: number = 0.1 // 0.1 ETH or 0.1 SOL or 0.1 TRON or 0.1 BTC
+
+export const DEFAULT_TRANSFER_BTC_AMOUNT: string = '0.00001'
 
 // Route path constants
 export const ROUTES = {
@@ -12,6 +22,7 @@ export const ROUTES = {
   ETHERS: '/ethers',
   SOLANA: '/solana',
   TRON: '/tron',
+  BITCOIN: '/bitcoin',
 } as const
 
 // Valid route paths list
@@ -24,6 +35,7 @@ export const DEFAULT_ROUTE = ROUTES.ETHERS
 export const NAV_ITEMS = [
   { path: ROUTES.ETHERS, label: 'Ethereum' },
   { path: ROUTES.SOLANA, label: 'Solana' },
+  { path: ROUTES.BITCOIN, label: 'Bitcoin' },
   { path: ROUTES.TRON, label: 'Tron' },
 ] as const
 
