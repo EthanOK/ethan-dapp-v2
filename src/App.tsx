@@ -5,6 +5,7 @@ import {
   metadata,
   ethersAdapter,
   solanaAdapter,
+  bitcoinAdapter,
 } from './config'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { EthersPage } from './pages/EthersPage'
@@ -17,10 +18,11 @@ import { ROUTES } from './config/constant'
 import { Toaster } from 'react-hot-toast'
 
 import './App.css'
+import { BitcoinPage } from './pages/BitcoinPage'
 
 // Create a AppKit instance
 createAppKit({
-  adapters: [ethersAdapter, solanaAdapter],
+  adapters: [ethersAdapter, solanaAdapter, bitcoinAdapter],
   networks,
   metadata,
   projectId,
@@ -43,6 +45,7 @@ export function App() {
         <Route path={ROUTES.HOME} element={<HomeRedirect />} />
         <Route path={ROUTES.ETHERS} element={<EthersPage />} />
         <Route path={ROUTES.SOLANA} element={<SolanaPage />} />
+        <Route path={ROUTES.BITCOIN} element={<BitcoinPage />} />
         <Route path={ROUTES.TRON} element={<TronPage />} />
       </Routes>
     </BrowserRouter>

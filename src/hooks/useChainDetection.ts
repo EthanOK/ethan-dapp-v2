@@ -18,6 +18,8 @@ export const useChainDetection = () => {
         return 'ethers'
       case 'solana':
         return 'solana'
+      case 'bip122':
+        return 'bitcoin'
       default:
         return null
     }
@@ -31,10 +33,15 @@ export const useChainDetection = () => {
     return getChainType() === 'solana'
   }
 
+  const isBitcoinChain = () => {
+    return getChainType() === 'bitcoin'
+  }
+
   return {
     chainType: getChainType(),
     isEthereumChain,
     isSolanaChain,
+    isBitcoinChain,
     chainId,
     caipAddress,
   }
