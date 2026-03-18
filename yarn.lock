@@ -291,6 +291,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bitcoinerlab/secp256k1@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@bitcoinerlab/secp256k1@npm:1.2.0"
+  dependencies:
+    "@noble/curves": "npm:^1.7.0"
+  checksum: 10/435978260e15832227e37c683ca9b470625786ef8903a174ff4386d16cba49ba5c43c7bc4d0284be2d69e467b3fb0e030c8845895f2fe768b505ebd42e106938
+  languageName: node
+  linkType: hard
+
 "@coinbase/cdp-sdk@npm:^1.0.0":
   version: 1.40.1
   resolution: "@coinbase/cdp-sdk@npm:1.40.1"
@@ -1154,7 +1163,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:1.9.7, @noble/curves@npm:^1.4.2, @noble/curves@npm:^1.6.0, @noble/curves@npm:^1.8.0, @noble/curves@npm:~1.9.0":
+"@noble/curves@npm:1.9.7, @noble/curves@npm:^1.4.2, @noble/curves@npm:^1.6.0, @noble/curves@npm:^1.7.0, @noble/curves@npm:^1.8.0, @noble/curves@npm:~1.9.0":
   version: 1.9.7
   resolution: "@noble/curves@npm:1.9.7"
   dependencies:
@@ -8413,6 +8422,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-ethers-appkit@workspace:."
   dependencies:
+    "@bitcoinerlab/secp256k1": "npm:^1.2.0"
     "@eslint/js": "npm:^9.36.0"
     "@reown/appkit": "npm:1.8.18"
     "@reown/appkit-adapter-bitcoin": "npm:^1.8.18"

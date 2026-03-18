@@ -26,3 +26,7 @@ dist-ssr
 .env
 
 .yarn
+
+# skills
+.agent
+.agents

@@ -10,6 +10,7 @@ import {
   type Provider,
 } from '@reown/appkit/react'
 import { BrowserProvider } from 'ethers'
+import { IsBitcoinTestnet } from '../utils/BitcoinUtil'
 
 interface InfoListProps {
   hash: string
@@ -28,6 +29,18 @@ export const InfoList = ({ hash, signedMsg, balance }: InfoListProps) => {
   const events = useAppKitEvents()
   const walletInfo = useWalletInfo()
   const { walletProvider } = useAppKitProvider<Provider>('eip155')
+
+  const isProbablyBitcoinTxid = /^[0-9a-fA-F]{64}$/.test(hash)
+  const isProbablyBitcoinAddress = /^(bc1|tb1|[123]|[mn2])/.test(address || '')
+  const isBitcoin = isProbablyBitcoinTxid && isProbablyBitcoinAddress
+  const bitcoinExplorerTxUrl = isBitcoin
+    ? `https://mempool.space${IsBitcoinTestnet(address || '') ? '/testnet' : ''}/tx/${hash}`
+    : ''
+  const bitcoinNetworkLabel = isBitcoin
+    ? IsBitcoinTestnet(address || '')
+      ? 'Bitcoin Testnet'
+      : 'Bitcoin Mainnet'
+    : ''
 
   useEffect(() => {
     console.log('Events: ', events)
@@ -67,10 +80,32 @@ export const InfoList = ({ hash, signedMsg, balance }: InfoListProps) => {
         <section>
           <h2>Sign Tx</h2>
           <pre>
-            Hash: {hash}
+            Hash:{' '}
+            {isBitcoin ? (
+              <a
+                href={bitcoinExplorerTxUrl}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  color: '#2563eb',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                }}
+              >
+                {hash}
+              </a>
+            ) : (
+              hash
+            )}
             <br />
             Status: {statusTx}
             <br />
+            {isBitcoin ? (
+              <>
+                Network: {bitcoinNetworkLabel}
+                <br />
+              </>
+            ) : null}
           </pre>
         </section>
       )}

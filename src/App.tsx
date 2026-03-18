@@ -40,7 +40,7 @@ export function App() {
     <BrowserRouter>
       <Navigation />
       <AutoRedirect />
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
       <Routes>
         <Route path={ROUTES.HOME} element={<HomeRedirect />} />
         <Route path={ROUTES.ETHERS} element={<EthersPage />} />

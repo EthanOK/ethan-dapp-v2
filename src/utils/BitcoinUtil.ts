@@ -1,14 +1,18 @@
+import type { CaipNetwork, CaipNetworkId } from '@reown/appkit'
+import { bitcoinTestnet } from '@reown/appkit/networks'
+import type { BitcoinConnector } from '@reown/appkit-adapter-bitcoin'
 import {
   Psbt,
   networks as bitcoinNetworks,
   address as bitcoinAddress,
-  Network,
   payments as bitcoinPayments,
+  type Network,
+  initEccLib,
 } from 'bitcoinjs-lib'
 import * as bitcoinPSBTUtils from 'bitcoinjs-lib/src/psbt/psbtutils'
-import { bitcoinTestnet } from '@reown/appkit/networks'
-import { CaipNetwork, CaipNetworkId } from '@reown/appkit'
-import { BitcoinConnector } from '@reown/appkit-adapter-bitcoin'
+import ecc from '@bitcoinerlab/secp256k1'
+
+initEccLib(ecc)
 
 export const IsBitcoinTestnet = (address: string) => {
   return detectNetwork(address) === 'testnet'
@@ -31,14 +35,14 @@ function detectNetwork(address: string) {
   return 'invalid'
 }
 
-export const getBitcoinNetwork = (networkId: CaipNetworkId): Network => {
-  return isTestnet(networkId)
-    ? bitcoinNetworks.testnet
-    : bitcoinNetworks.bitcoin
-}
-
-export const isTestnet = (networkId: CaipNetworkId): boolean => {
-  return networkId === bitcoinTestnet.caipNetworkId
+export type CreateSignPSBTParams = {
+  senderAddress: string
+  recipientAddress: string
+  network: CaipNetwork
+  amount: number
+  utxos: UTXO[]
+  feeRate: number
+  memo?: string
 }
 
 export type UTXO = {
@@ -52,7 +56,58 @@ export type UTXO = {
     block_time: number
   }
 }
+export const calculateChange = (
+  utxos: UTXO[],
+  amount: number,
+  feeRate: number,
+): number => {
+  const inputSum = utxos.reduce((sum, utxo) => sum + utxo.value, 0)
+  /**
+   * 10 bytes: This is an estimated fixed overhead for the transaction.
+   * 148 bytes: This is the average size of each input (UTXO).
+   * 34 bytes: This is the size of each output.
+   * The multiplication by 2 indicates that there are usually two outputs in a typical transaction (one for the recipient and one for change)
+   */
+  const estimatedSize = 10 + 148 * utxos.length + 34 * 2
+  const fee = estimatedSize * feeRate
+  const change = inputSum - amount - fee
 
+  return change
+}
+
+export const getBitcoinNetwork = (networkId: CaipNetworkId): Network => {
+  return isTestnet(networkId)
+    ? bitcoinNetworks.testnet
+    : bitcoinNetworks.bitcoin
+}
+
+export const isTestnet = (networkId: CaipNetworkId): boolean => {
+  return networkId === bitcoinTestnet.caipNetworkId
+}
+
+export const getFeeRate = async () => {
+  const defaultFeeRate = 2
+  try {
+    const response = await fetch(
+      'https://mempool.space/api/v1/fees/recommended',
+    )
+    if (response.ok) {
+      const data = await response.json()
+
+      if (data?.fastestFee) {
+        return parseInt(data.fastestFee, 10)
+      }
+    }
+  } catch (e) {
+    console.error('Error fetching fee rate', e)
+  }
+
+  return defaultFeeRate
+}
+
+//
+// Get the utxos ... List of unspent transactions that the sender has
+//
 export const getUTXOs = async (
   address: string,
   isTestnet: boolean = false,
@@ -63,20 +118,9 @@ export const getUTXOs = async (
   return await response.json()
 }
 
-// export const getBalance = async (caipNetwork: CaipNetwork, address: string): Promise<number> => {
-//     // get the utxos ... this is the list of unspent transactions that the sender has
-//     const utxos = await getUTXOs(address, isTestnet(caipNetwork.caipNetworkId))
-//     // return the sum of the utxos ... The balance of the sender
-//     return utxos.reduce((sum, utxo) => sum + utxo.value, 0)
-// }
-
-export const getBitCoinBalance = async (address: string): Promise<number> => {
-  // get the utxos ... this is the list of unspent transactions that the sender has
-  const utxos = await getUTXOs(address, IsBitcoinTestnet(address))
-  // return the sum of the utxos ... The balance of the sender
-  return utxos.reduce((sum, utxo) => sum + utxo.value, 0)
-}
-
+//
+// Get the payment by address ... The type of address that the sender has
+//
 export const getPaymentByAddress = (
   address: string,
   network: bitcoinNetworks.Network,
@@ -102,64 +146,45 @@ export const getPaymentByAddress = (
   throw new Error('Unsupported payment type')
 }
 
-export const getFeeRate = async () => {
-  const defaultFeeRate = 2
-  try {
-    const response = await fetch(
-      'https://mempool.space/api/v1/fees/recommended',
-    )
-    if (response.ok) {
-      const data = await response.json()
-
-      if (data?.fastestFee) {
-        return parseInt(data.fastestFee, 10)
-      }
-    }
-  } catch (e) {
-    console.error('Error fetching fee rate', e)
-  }
-
-  return defaultFeeRate
+export const getBitCoinBalance = async (address: string): Promise<number> => {
+  // get the utxos ... this is the list of unspent transactions that the sender has
+  const utxos = await getUTXOs(address, IsBitcoinTestnet(address))
+  // return the sum of the utxos ... The balance of the sender
+  return utxos.reduce((sum, utxo) => sum + utxo.value, 0)
 }
 
-export const calculateChange = (
-  utxos: UTXO[],
-  amount: number,
-  feeRate: number,
-): number => {
-  const inputSum = utxos.reduce((sum, utxo) => sum + utxo.value, 0)
-  /**
-   * 10 bytes: This is an estimated fixed overhead for the transaction.
-   * 148 bytes: This is the average size of each input (UTXO).
-   * 34 bytes: This is the size of each output.
-   * The multiplication by 2 indicates that there are usually two outputs in a typical transaction (one for the recipient and one for change)
-   */
-  const estimatedSize = 10 + 148 * utxos.length + 34 * 2
-  const fee = estimatedSize * feeRate
-  const change = inputSum - amount - fee
-
-  return change
+export const getBalance = async (
+  caipNetwork: CaipNetwork,
+  address: string,
+): Promise<number> => {
+  // get the utxos ... this is the list of unspent transactions that the sender has
+  const utxos = await getUTXOs(address, isTestnet(caipNetwork.caipNetworkId))
+  // return the sum of the utxos ... The balance of the sender
+  return utxos.reduce((sum, utxo) => sum + utxo.value, 0)
 }
 
+//
+// Create a psbt ... The PSBT that will be signed by the sender in the wallet
+//
 export const createPSBT = async (
   caipNetwork: CaipNetwork,
   amount: number,
-  address: string,
+  payAddress: string,
   recipientAddress: string,
+  changeAddress: string = payAddress,
   memo?: string,
 ): Promise<BitcoinConnector.SignPSBTParams> => {
   // get the bitcoin network from our caipNetwork
   const network = getBitcoinNetwork(caipNetwork.caipNetworkId)
   // get the payment by address ... this is the type of address that the sender has
-  const payment = getPaymentByAddress(address, network)
+  const payment = getPaymentByAddress(payAddress, network)
   // get the utxos ... this is the list of unspent transactions that the sender has
-  const utxos = await getUTXOs(address, isTestnet(caipNetwork.caipNetworkId))
+  const utxos = await getUTXOs(payAddress, isTestnet(caipNetwork.caipNetworkId))
   // get the fee rate ... this is the fee per byte
   const feeRate = await getFeeRate()
   // calculate the change ... this is the amount of satoshis that will be sent back to the sender
   const change = calculateChange(utxos, amount, feeRate)
   // the memo is the message that will be embedded in the transaction
-  // const memo = 'Hello Reown AppKit!'
 
   const psbt = new Psbt({ network: network })
 
@@ -170,7 +195,7 @@ export const createPSBT = async (
 
   if (change > 0) {
     psbt.addOutput({
-      address: address,
+      address: changeAddress,
       value: BigInt(change),
     })
   }
@@ -187,11 +212,13 @@ export const createPSBT = async (
     })
   }
 
-  // add the output to the psbt ... this is the recipient address and the amount of satoshis that will be sent to the recipient
-  psbt.addOutput({
-    address: recipientAddress,
-    value: BigInt(amount),
-  })
+  if (amount > 0) {
+    // add the output to the psbt ... this is the recipient address and the amount of satoshis that will be sent to the recipient
+    psbt.addOutput({
+      address: recipientAddress,
+      value: BigInt(amount),
+    })
+  }
 
   if (memo) {
     const data = Buffer.from(memo, 'utf8')
