@@ -6,6 +6,7 @@ export const BitcoinPage = () => {
   const [hash, setHash] = useState('')
   const [signedMsg, setSignedMsg] = useState('')
   const [balance, setBalance] = useState('')
+  const [publicKey, setPublicKey] = useState('')
 
   return (
     <div className={'pages'}>
@@ -20,8 +21,14 @@ export const BitcoinPage = () => {
         sendHash={setHash}
         sendSignMsg={setSignedMsg}
         sendBalance={setBalance}
+        sendPublicKey={setPublicKey}
       />
-      <InfoList hash={hash} signedMsg={signedMsg} balance={balance} />
+      <InfoList
+        hash={hash}
+        signedMsg={signedMsg}
+        balance={balance}
+        publicKey={publicKey}
+      />
     </div>
   )
 }

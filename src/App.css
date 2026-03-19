@@ -46,6 +46,7 @@ section {
 }
 
 .pages {
+  width: 100%;
   align-items: center;
   justify-items: center;
   text-align: center;
