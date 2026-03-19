@@ -16,6 +16,7 @@ interface InfoListProps {
   hash: string
   signedMsg: string
   balance: string
+  publicKey?: string
 }
 
 export const InfoList = ({ hash, signedMsg, balance }: InfoListProps) => {
