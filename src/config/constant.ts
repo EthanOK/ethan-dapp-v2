@@ -25,12 +25,6 @@ export const ROUTES = {
   BITCOIN: '/bitcoin',
 } as const
 
-// Valid route paths list
-export const VALID_ROUTES = [ROUTES.ETHERS, ROUTES.SOLANA, ROUTES.TRON] as const
-
-// Default route
-export const DEFAULT_ROUTE = ROUTES.ETHERS
-
 // Navigation items configuration
 export const NAV_ITEMS = [
   { path: ROUTES.ETHERS, label: 'Ethereum' },
@@ -38,6 +32,12 @@ export const NAV_ITEMS = [
   { path: ROUTES.BITCOIN, label: 'Bitcoin' },
   { path: ROUTES.TRON, label: 'Tron' },
 ] as const
+
+// Valid route paths list (derived from navigation to avoid config drift)
+export const VALID_ROUTES = NAV_ITEMS.map((item) => item.path) as readonly (typeof NAV_ITEMS)[number]['path'][]
+
+// Default route
+export const DEFAULT_ROUTE = ROUTES.ETHERS
 
 export const TRON_MAIN_NET_RPC_URL = 'https://api.trongrid.io'
 export const TRON_NILE_NET_RPC_URL = 'https://nile.trongrid.io'
